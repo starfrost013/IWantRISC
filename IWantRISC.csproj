@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Content\BIOS\Machine\BIOS_IBM5150_27OCT82_1501476_U33.BIN" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Content\BIOS\Machine\BIOS_IBM5150_27OCT82_1501476_U33.BIN">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="NuCore.Utilities">
+      <HintPath>NuCore.Utilities.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
