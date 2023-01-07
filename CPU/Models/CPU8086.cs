@@ -142,7 +142,10 @@
                     case 0xFD: // STD
                         DF = true;
                         break;
-
+                    default:
+                        NCError.ShowErrorBox($"Unknown Opcode! {next}!!!!!!! IT IS EXTREM!", 7000, "CPU8086::Execute - Unknown Opcode encountered (probably not implemented)",
+                            NCErrorSeverity.Error, null, true);
+                        break;
                 }
 
                 IP++; 

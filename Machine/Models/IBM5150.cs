@@ -18,6 +18,20 @@
 
         internal override void Boot()
         {
+            NCLogging.Log("Loading BIOS", "IBM 5150");
+
+            byte[] bios = File.ReadAllBytes("Content\\BIOS\\Machine\\BIOS_IBM5150_27OCT82_1501476_U33.BIN");
+
+            // check bios
+            Debug.Assert(bios.Length != 8192, "wrong size to be a 5150 bios what are you doing");
+
+            for (int curByte = 0xFE000; curByte <= 0xFFFFF; curByte++)
+            {
+                RAM[curByte] = bios[curByte & 0x1FFF];
+            }
+
+
+            NCLogging.Log("Loaded BIOS!", "IBM 5150", ConsoleColor.Green);
 
             CPU.Boot();
         }
