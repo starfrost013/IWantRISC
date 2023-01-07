@@ -21,11 +21,11 @@ namespace IWantRISC
         /// Create a new PC.
         /// </summary>
         /// <param name="cpu">The CPU of the PC.</param>
-        /// <param name="ramSize"></param>
-        public PC(CPU cpu, int ramSize)
+        /// <param name="addressSpaceSize"></param>
+        public PC(CPU cpu, int addressSpaceSize, int ramSize = 65536)
         {
             CPU = cpu;
-            RAM = new byte[ramSize];
+            RAM = new byte[addressSpaceSize];
         }
 
         internal abstract void Boot();

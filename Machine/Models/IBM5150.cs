@@ -11,7 +11,7 @@
     /// </summary>
     internal class IBM5150 : PC
     {
-        public IBM5150(int ramSize) : base(new CPU8086(), ramSize)
+        public IBM5150(int ramSize = 65536) : base(new CPU8086(), 1048576, ramSize)
         {
             Debug.Assert(ramSize >= 65535, "IBM 5150 requires >64kb ram!"); 
         }
@@ -23,7 +23,7 @@
             byte[] bios = File.ReadAllBytes("Content\\BIOS\\Machine\\BIOS_IBM5150_27OCT82_1501476_U33.BIN");
 
             // check bios
-            Debug.Assert(bios.Length != 8192, "wrong size to be a 5150 bios what are you doing");
+            Debug.Assert(bios.Length == 8192, "wrong size to be a 5150 bios what are you doing");
 
             for (int curByte = 0xFE000; curByte <= 0xFFFFF; curByte++)
             {

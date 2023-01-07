@@ -21,6 +21,8 @@
             ES = 0x0;
 
             RegisterDump();
+
+            Execute();
         }
 
         internal override void Execute()
@@ -28,7 +30,7 @@
             while (!Halt)
             {
                 // get the next instruction
-                byte next = Emulator.ThePC.RAM[PC];
+                byte next = Emulator.CurMachine.RAM[PC];
 
                 switch (next)
                 {
@@ -143,14 +145,23 @@
                         DF = true;
                         break;
                     default:
-                        NCError.ShowErrorBox($"Unknown Opcode! {next}!!!!!!! IT IS EXTREM!", 7000, "CPU8086::Execute - Unknown Opcode encountered (probably not implemented)",
+                        NCError.ShowErrorBox($"Unknown Opcode! {next:X}!!!!!!! IT IS EXTREM!", 7000, "CPU8086::Execute - Unknown Opcode encountered (probably not implemented)",
                             NCErrorSeverity.Error, null, true);
                         break;
                 }
 
-                IP++; 
+                // 64kb segment wraparound
+                if (IP == 65535)
+                {
+                    IP = 0;
+                }
+                else
+                {
+                    IP++;
+                }
+
+                RegisterDump();
             }
         }
-
     }
 }

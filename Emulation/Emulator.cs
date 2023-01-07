@@ -8,7 +8,7 @@ namespace IWantRISC
     /// </summary>
     internal static class Emulator
     {
-        public static PC ThePC { get; set; }
+        public static PC CurMachine { get; set; }
 
 
     }

@@ -167,7 +167,7 @@ namespace IWantRISC
         /// <summary>
         /// Fake register used to make my life easier because unIntelligent says no
         /// </summary>
-        internal int PC => (CS * PARAGRAPH_SIZE) + IP;
+        internal int PC => ((CS * PARAGRAPH_SIZE) + IP) & 0xFFFFF; // 20-bit address space wraparound
 
         /// <summary>
         /// See <see cref="PC"/>.
