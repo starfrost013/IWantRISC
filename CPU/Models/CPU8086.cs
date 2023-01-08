@@ -22,7 +22,6 @@ namespace IWantRISC
             DS = 0x0;
             SS = 0x0;
             ES = 0x0;
-            AX = 0x7243;
 
             RegisterDump();
 
@@ -245,9 +244,74 @@ namespace IWantRISC
                         DI = AX;
                         AX = tempDi;
                         break;
+                    case 0x9E: // SAHF
+                        // per 808x manual:
+                        // bit7 = SF
+                        // bit6 = ZF
+                        // bit4 = AF
+                        // bit2 = PF
+                        // bit0 = CF
+                        SF = ((AH >> 7) & 1) == 1;
+                        ZF = ((AH >> 6) & 1) == 1;
+                        AF = ((AH >> 4) & 1) == 1;
+                        PF = ((AH >> 2) & 1) == 1;
+                        CF = (AH & 1) == 1;
+                        break;
+                    case 0x9F: // LAHF
+
+                        break;  
                     case 0xA0: // MOV AL, (8-bit signed offset from current overridden segment)
-                        ushort offset = Read16();
-                        AX |= ((Emulator.CurMachine.AddressSpace[(OS + offset) % ushort.MaxValue]) & 0xFF);
+                        ushort alOffset = Read16();
+                        AX |= (ushort)((Emulator.CurMachine.AddressSpace[(OS + alOffset) % ushort.MaxValue]) & 0xFF);
+                        break;
+                    case 0xB0: // MOV AL, (8-bit immediate) 
+                        AX = (ushort)((AX & 0xFF00) + Read8());
+                        break;
+                    case 0xB1: // MOV CL, (8-bit immediate)
+                        CX = (ushort)((CX & 0xFF00) + Read8());
+                        break;
+                    case 0xB2: // MOV DL, (8-bit immediate)
+                        DX = (ushort)((DX & 0xFF00) + Read8());
+                        break;
+                    case 0xB3: // MOV BL, (8-bit immediate)
+                        BX = (ushort)((BX & 0xFF00) + Read8());
+                        break;
+                    case 0xB4: // MOV AH, (8-bit immediate) 
+                        // stupid way of setting AH
+                        AX = (ushort)((Read8() << 8) | (AX & 0x00FF));
+                        break;
+                    case 0xB5: // MOV CH, (8-bit immediate) 
+                        CX = (ushort)((Read8() << 8) | (CX & 0x00FF));
+                        break;
+                    case 0xB6: // MOV DH, (8-bit immediate) 
+                        DX = (ushort)((Read8() << 8) | (AX & 0x00FF));
+                        break;
+                    case 0xB7: // MOV BH, (8-bit immediate) 
+                        BX = (ushort)((Read8() << 8) | (BX & 0x00FF));
+                        break;
+                    case 0xB8: // MOV AX, (16-bit immediate) 
+                        AX = Read16();
+                        break;
+                    case 0xB9: // MOV CX, (16-bit immediate) 
+                        CX = Read16();
+                        break;
+                    case 0xBA: // MOV DX, (16-bit immediate) 
+                        DX = Read16();
+                        break;
+                    case 0xBB: // MOV BX, (16-bit immediate) 
+                        BX = Read16();
+                        break;
+                    case 0xBC: // MOV SP, (16-bit immediate) 
+                        SP = Read16();
+                        break;
+                    case 0xBD: // MOV BP, (16-bit immediate) 
+                        BP = Read16();
+                        break;
+                    case 0xBE: // MOV SI, (16-bit immediate) 
+                        SI = Read16();
+                        break;
+                    case 0xBF: // MOV DI, (16-bit immediate) 
+                        DI = Read16();
                         break;
                     case 0xEA: // FAR JMP (Absolute far jump)
                         ushort newOffset = Read16(); // read offset
@@ -306,6 +370,13 @@ namespace IWantRISC
                 RegisterDump();
 
             }
+        }
+
+        private byte Read8()
+        {
+            IP++;
+
+            return Emulator.CurMachine.AddressSpace[PC];
         }
 
         private ushort Read16()

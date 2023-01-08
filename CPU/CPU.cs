@@ -247,7 +247,7 @@ namespace IWantRISC
 
         internal virtual void RegisterDump()
         {
-            NCLogging.Log($"\nGeneral: AX={AX:X} (AH={AH:X} AL={AL:X}) BX={BX:X} CX={CX:X} DX={DX:X}\n" +
+            NCLogging.Log($"\n\nGeneral: AX={AX:X} BX={BX:X} CX={CX:X} DX={DX:X}\n" +
                 $"Index and pointer: SP={SP:X} BP={BP:X} SI={SI:X} DI={DI:X}\n" +
                 $"Segment: CS={CS:X} IP={IP:X} (calculated PC={CurPC}) DS={DS:X} ES={ES:X}\n" +
                 $"Stack: SS={SS:X} SP={SP:X} (calculated top of stack=0X{StackTop:X5})\n" +
