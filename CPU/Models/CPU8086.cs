@@ -22,6 +22,7 @@ namespace IWantRISC
             DS = 0x0;
             SS = 0x0;
             ES = 0x0;
+            AX = 0x7243;
 
             RegisterDump();
 
@@ -35,6 +36,42 @@ namespace IWantRISC
                 // get the next instruction
                 byte next = Emulator.CurMachine.AddressSpace[PC];
 
+                // Reset the segment override prefix to its default value (DS)
+                ushort OS = DS;
+
+                // reset the repeat prefix
+                // TODO: MAKE THIS AN ENUM
+                int repeatState = 0;
+
+                // Handle prefix override.
+                switch (next)
+                {
+                    case 0x26: // ES prefix override.
+                        OS = ES;
+                        IP++;
+                        break;
+                    case 0x2E: // CS prefix override.
+                        OS = CS;
+                        IP++;
+                        break;
+                    case 0x36: // SS prefix override.
+                        OS = SS;
+                        IP++;
+                        break;
+                    case 0x3E: // DS prefix override.
+                        OS = DS;
+                        IP++;
+                        break;
+                    case 0xF2: // REPNE/REPNZ (non-zer0)
+                        repeatState = 2;
+                        break;
+                    case 0xF3: // REP/REPE/REPZ (zero)
+                        repeatState = 1;
+                        break;
+
+                }
+
+                // Handle the rest of the instructions.
                 switch (next)
                 {
                     case 0x06: // PUSH ES
@@ -207,6 +244,10 @@ namespace IWantRISC
                         ushort tempDi = DI;
                         DI = AX;
                         AX = tempDi;
+                        break;
+                    case 0xA0: // MOV AL, (8-bit signed offset from current overridden segment)
+                        ushort offset = Read16();
+                        AX |= ((Emulator.CurMachine.AddressSpace[(OS + offset) % ushort.MaxValue]) & 0xFF);
                         break;
                     case 0xEA: // FAR JMP (Absolute far jump)
                         ushort newOffset = Read16(); // read offset
