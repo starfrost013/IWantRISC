@@ -9,7 +9,7 @@
 
         internal override void Boot()
         {
-            NCLogging.Log("808x RESET");
+            NCLogging.Log("808x RESET", "Hope it boots this time", ConsoleColor.Blue);
 
             //All of the FLAGS
             //are initialised to zero,
@@ -29,8 +29,9 @@
         {
             while (!Halt)
             {
+
                 // get the next instruction
-                byte next = Emulator.CurMachine.RAM[PC];
+                byte next = Emulator.CurMachine.AddressSpace[PC];
 
                 switch (next)
                 {
@@ -119,6 +120,15 @@
                         DI = AX;
                         AX = tempDi;
                         break;
+                    case 0xEA: // FAR JMP (Absolute far jump)
+                        ushort newOffset = Read16(); // read offset
+                        ushort newSegment = Read16();
+
+                        IP = newOffset;
+                        CS = newSegment;
+
+                        NCLogging.Log($"FAR JUMP to {CS:X4}:{IP:X4}", "Functioning as intended?", ConsoleColor.Blue);
+                        break;
                     case 0xF4: // HLT
                         Halt = true; 
                         break;
@@ -145,13 +155,15 @@
                         DF = true;
                         break;
                     default:
-                        NCError.ShowErrorBox($"Unknown Opcode! {next:X}!!!!!!! IT IS EXTREM!", 7000, "CPU8086::Execute - Unknown Opcode encountered (probably not implemented)",
+                        NCError.ShowErrorBox($"unknown opcode lol (0x{next:X})", 7000, $"CPU8086::Execute - Unknown Opcode encountered (probably not implemented) - (0x{next:X})",
                             NCErrorSeverity.Error, null, true);
                         break;
                 }
 
+                RegisterDump();
+
                 // 64kb segment wraparound
-                if (IP == 65535)
+                if (IP == ushort.MaxValue) // 0xFFFF
                 {
                     IP = 0;
                 }
@@ -159,9 +171,17 @@
                 {
                     IP++;
                 }
-
-                RegisterDump();
             }
+        }
+
+        private ushort Read16()
+        {
+            IP++;
+            byte byte1 = Emulator.CurMachine.AddressSpace[PC];
+            IP++;
+            byte byte2 = Emulator.CurMachine.AddressSpace[PC];
+            // seems smart to stackalloc this
+            return BitConverter.ToUInt16(stackalloc byte[] { byte1, byte2 });
         }
     }
 }

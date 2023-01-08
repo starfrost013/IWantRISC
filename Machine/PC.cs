@@ -15,7 +15,7 @@ namespace IWantRISC
 
         // GPU, interrupt controller, blah blah blah 
 
-        public byte[] RAM { get; set; }
+        public byte[] AddressSpace { get; set; }
 
         /// <summary>
         /// Create a new PC.
@@ -25,7 +25,7 @@ namespace IWantRISC
         public PC(CPU cpu, int addressSpaceSize, int ramSize = 65536)
         {
             CPU = cpu;
-            RAM = new byte[addressSpaceSize];
+            AddressSpace = new byte[addressSpaceSize];
         }
 
         internal abstract void Boot();

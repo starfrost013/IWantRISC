@@ -172,7 +172,7 @@ namespace IWantRISC
         /// <summary>
         /// See <see cref="PC"/>.
         /// </summary>
-        private string CurPC => $"{CS:X}:{IP:X} (0x{PC:X})";
+        private string CurPC => $"{CS:X4}:{IP:X4} (0x{PC:X})";
 
         /// <summary>
         /// Pointer to the data segment.

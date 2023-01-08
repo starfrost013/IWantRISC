@@ -27,7 +27,7 @@
 
             for (int curByte = 0xFE000; curByte <= 0xFFFFF; curByte++)
             {
-                RAM[curByte] = bios[curByte & 0x1FFF];
+                AddressSpace[curByte] = bios[curByte & 0x1FFF];
             }
 
 
