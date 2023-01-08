@@ -1,4 +1,7 @@
-﻿namespace IWantRISC
+﻿using System.Reflection.PortableExecutable;
+using System.Xml.Schema;
+
+namespace IWantRISC
 {
     internal class CPU8086 : CPU
     {
@@ -29,12 +32,39 @@
         {
             while (!Halt)
             {
-
                 // get the next instruction
                 byte next = Emulator.CurMachine.AddressSpace[PC];
 
                 switch (next)
                 {
+                    case 0x06: // PUSH ES
+                        SP -= 2;
+                        Write16(StackTop, ES);
+                        break;
+                    case 0x07: // POP ES
+                        ES = Pop();
+                        break;
+                    case 0x0E: // PUSH CS
+                        SP -= 2;
+                        Write16(StackTop, CS);
+                        break;
+                    case 0x0F: // POP CS (useless but maybe people want to use it)
+                        CS = Pop();
+                        break;
+                    case 0x16: // PUSH SS
+                        SP -= 2;
+                        Write16(StackTop, SS);
+                        break;
+                    case 0x17: // POP SS
+                        SS = Pop();
+                        break;
+                    case 0x1E: // PUSH DS
+                        SP -= 2;
+                        Write16(StackTop, DS);
+                        break;
+                    case 0x1F: // POP DS
+                        DS = Pop();
+                        break;
                     case 0x40: // INC AX
                         AX++;
                         break;
@@ -83,7 +113,65 @@
                     case 0x4F: // DEC DI
                         DI--;
                         break;
+                    case 0x50: // PUSH AX
+                        SP -= 2;
+                        Write16(StackTop, AX); 
+                        break;
+                    case 0x51: // PUSH CX
+                        SP -= 2;
+                        Write16(StackTop, CX);
+                        break;
+                    case 0x52: // PUSH DX
+                        SP -= 2;
+                        Write16(StackTop, DX);
+                        break;
+                    case 0x53: // PUSH BX
+                        SP -= 2;
+                        Write16(StackTop, BX);
+                        break;
+                    case 0x54: // PUSH SP
+                        SP -= 2;
+                        Write16(StackTop, SP);
+                        break;
+                    case 0x55: // PUSH BP
+                        SP -= 2;
+                        Write16(StackTop, BP);
+                        break;
+                    case 0x56: // PUSH SI
+                        SP -= 2;
+                        Write16(StackTop, SI);
+                        break;
+                    case 0x57: // PUSH DI
+                        SP -= 2;
+                        Write16(StackTop, DI);
+                        break;
+                    case 0x58: // POP AX
+                        AX = Pop();
+                        break;
+                    case 0x59: // POP CX
+                        CX = Pop();
+                        break;
+                    case 0x5A: // POP DX
+                        DX = Pop();
+                        break;
+                    case 0x5B: // POP BX
+                        BX = Pop();
+                        break;
+                    case 0x5C: // POP SP
+                        SP = Pop();
+                        break;
+                    case 0x5D: // POP BP
+                        BP = Pop();
+                        break;
+                    case 0x5E: // POP SI
+                        SI = Pop();
+                        break;
+                    case 0x5F: // POP DI
+                        DI = Pop(); 
+                        break;
                     case 0x90: // NOP (16-bit)
+                        // Technically this is XCHG AX, AX. 
+                        // Do any apps depend on this behaviour? I can imagine them doing so...x86...ugh
                         break;
                     case 0x91: // XCHG CX, AX
                         ushort tempCx = CX;
@@ -128,9 +216,11 @@
                         CS = newSegment;
 
                         NCLogging.Log($"FAR JUMP to {CS:X4}:{IP:X4}", "Functioning as intended?", ConsoleColor.Blue);
-                        break;
+                        // continue because we don't want IP to increase
+                        continue; 
                     case 0xF4: // HLT
-                        Halt = true; 
+                        Halt = true;
+                        NCLogging.Log("CPU HALT", "It might have crashed", ConsoleColor.Red);
                         break;
                     case 0xF5: // CMC
                         CF = !CF;
@@ -143,9 +233,11 @@
                         CF = true;
                         break;
                     case 0xFA: // CLI
+                        NCLogging.Log("Interrupts disabled", ConsoleColor.Blue);
                         IF = false;
                         break;
                     case 0xFB: // STI
+                        NCLogging.Log("Interrupts enabled", ConsoleColor.Blue);
                         IF = true;
                         break;
                     case 0xFC: // CLD
@@ -160,8 +252,6 @@
                         break;
                 }
 
-                RegisterDump();
-
                 // 64kb segment wraparound
                 if (IP == ushort.MaxValue) // 0xFFFF
                 {
@@ -171,6 +261,9 @@
                 {
                     IP++;
                 }
+
+                RegisterDump();
+
             }
         }
 
@@ -182,6 +275,26 @@
             byte byte2 = Emulator.CurMachine.AddressSpace[PC];
             // seems smart to stackalloc this
             return BitConverter.ToUInt16(stackalloc byte[] { byte1, byte2 });
+        }
+
+        private ushort Pop()
+        {
+            byte byte1 = Emulator.CurMachine.AddressSpace[StackTop];
+            byte byte2 = Emulator.CurMachine.AddressSpace[StackTop+1];
+
+            // INCREMENT sp by 2 AFTER reading
+            SP += 2;
+
+            // seems smart to stackalloc this
+            return BitConverter.ToUInt16(stackalloc byte[] { byte1, byte2 });
+        }
+
+        private void Write16(int position, ushort value)
+        {
+            // little endian,
+            // so write in reverse order.
+            Emulator.CurMachine.AddressSpace[position] = (byte)(value & 0xFF); // LSB
+            Emulator.CurMachine.AddressSpace[position] = (byte)((value >> 8) & 0xFF); // MSB
         }
     }
 }
