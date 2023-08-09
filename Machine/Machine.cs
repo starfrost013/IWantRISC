@@ -39,7 +39,7 @@
         public Machine(CPU cpu, uint ramSize = 65536)
         {
             CPU = cpu;
-            if (CPU is CPU8086) AddressSpace = new byte[1048576]; // 20-bit address space for 8086
+            AddressSpace = new byte[1048576]; // 20-bit address space for 8086. Make this better when we have more cpus
             Ram = ramSize;
         }
 

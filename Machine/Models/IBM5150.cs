@@ -13,7 +13,7 @@
     /// </summary>
     internal class IBM5150 : Machine
     {
-        public IBM5150(uint ramSize = 16384) : base(new CPU8086(), 1048576, ramSize)
+        public IBM5150(uint ramSize = 16384) : base(new CPU8086(), ramSize)
         {
             Debug.Assert(ramSize >= 16384, "IBM 5150 requires >64kb ram!"); 
         }
