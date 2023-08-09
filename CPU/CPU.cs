@@ -111,6 +111,10 @@ namespace IWantRISC
         /// </summary>
         public ushort SP { get; set; }
 
+        /// <summary>
+        /// To make my life easier.
+        /// Top of the stack.
+        /// </summary>
         internal ushort StackTop => (ushort)((SS * PARAGRAPH_SIZE) + SP);
 
         /// <summary>
@@ -153,7 +157,6 @@ namespace IWantRISC
         /// </summary>
         public ushort SS { get; set; }
 
-
         /// <summary>
         /// Pointer to the code segment.
         /// </summary>
@@ -172,7 +175,7 @@ namespace IWantRISC
         /// <summary>
         /// See <see cref="PC"/>.
         /// </summary>
-        private string CurPC => $"{CS:X4}:{IP:X4} (0x{PC:X})";
+        protected string CurPC => $"{CS:X4}:{IP:X4} (0x{PC:X})";
 
         /// <summary>
         /// Pointer to the data segment.
@@ -245,15 +248,10 @@ namespace IWantRISC
         /// </summary>
         internal abstract void Execute();
 
-        internal virtual void RegisterDump()
-        {
-            NCLogging.Log($"\n\nGeneral: AX={AX:X} BX={BX:X} CX={CX:X} DX={DX:X}\n" +
-                $"Index and pointer: SP={SP:X} BP={BP:X} SI={SI:X} DI={DI:X}\n" +
-                $"Segment: CS={CS:X} IP={IP:X} (calculated PC={CurPC}) DS={DS:X} ES={ES:X}\n" +
-                $"Stack: SS={SS:X} SP={SP:X} (calculated top of stack=0X{StackTop:X5})\n" +
-                $"Flags: Overflow={OF} Direction={DF} Interrupt enable={IF} Trap flag={TF} Sign={SF}\n" +
-                $"Zero flag={ZF} Aux carry={AF} Even parity={PF} Carry={CF}", "CPU Register Dump"); ;
-        }
+        /// <summary>
+        /// Dump registers...
+        /// </summary>
+        internal abstract void RegisterDump();
 
         #endregion
     }

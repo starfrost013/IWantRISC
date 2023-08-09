@@ -18,6 +18,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Starlib.Utilities" Version="1.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="NuCore.Utilities">
       <HintPath>NuCore.Utilities.dll</HintPath>
     </Reference>

@@ -1,15 +1,28 @@
-﻿
-namespace IWantRISC
+﻿namespace IWantRISC
 {
     /// <summary>
-    /// Emulator
-    /// 
-    /// Emulation state
+    /// Temporary class.
     /// </summary>
     internal static class Emulator
     {
-        public static PC CurMachine { get; set; }
+        /// <summary>
+        /// Stores the current machine.
+        /// </summary>
+        internal static Machine CurrentMachine { get; set; }
 
+        static Emulator()
+        {
+            CurrentMachine = new IBM5150();
+        }
 
+        /// <summary>
+        /// Public constructor.
+        /// </summary>
+        /// <param name="machine">The machine to run</param>
+        public static void Start(Machine machine)
+        { 
+            CurrentMachine = machine;
+            CurrentMachine.Start();
+        }
     }
 }

@@ -5,7 +5,7 @@
 //global using LightningPackager;
 //global using Newtonsoft.Json;
 //global using LightningBase;
-global using NuCore.Utilities;
+global using Starlib.Utilities;
 global using System;
 global using System.Collections.Generic;
 global using System.ComponentModel;
