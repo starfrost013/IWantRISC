@@ -87,7 +87,7 @@ namespace IWantRISC
                         IP++;
                         break;
                     case 0x0F: // POP CS
-                        
+                        Logger.LogError("This instruction is not really recommended", 7001, LoggerSeverity.Warning) ;
                         CS = Pop();
                         IP++;
                         break;
@@ -500,6 +500,7 @@ namespace IWantRISC
                         break;
                     default:
                         Logger.LogError($"Unknown Opcode (0x{next:X}) - likely unimplemented", 7000, LoggerSeverity.Error, null, true);
+                        IP++;
                         break;
                 }
 
