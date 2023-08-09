@@ -36,11 +36,10 @@
         /// Create a new PC.
         /// </summary>
         /// <param name="cpu">The CPU of the PC.</param>
-        /// <param name="addressSpaceSize"></param>
-        public Machine(CPU cpu, int addressSpaceSize, uint ramSize = 65536)
+        public Machine(CPU cpu, uint ramSize = 65536)
         {
             CPU = cpu;
-            AddressSpace = new byte[addressSpaceSize];
+            if (CPU is CPU8086) AddressSpace = new byte[1048576]; // 20-bit address space for 8086
             Ram = ramSize;
         }
 

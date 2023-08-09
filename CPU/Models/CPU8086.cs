@@ -21,6 +21,9 @@ namespace IWantRISC
             SS = 0x0;
             ES = 0x0;
 
+            // rebult address space
+            Emulator.CurrentMachine.AddressSpace = new byte[1048576];
+
             RegisterDump();
 
             Execute();
